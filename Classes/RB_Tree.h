@@ -1,24 +1,93 @@
 #pragma once
 
 #include <queue>
-#include <Node.h>
+#include "Node.h"
+
 
 class RB_Tree {
     public:
+         using enum Node::Colour;
+
          RB_Tree(): root(nullptr){}
+
+         // Insertion methods ----------------------------------------------
+         void insert (Order newOrder){
+            if (!root){
+               Node* newNode = new Node(newOrder);
+               newNode->setColour(BLACK);
+            }
+
+            Node* nodeOrParent = searchOrFindParent(newOrder.getPrice());
+            if (nodeOrParent->getPrice() == newOrder.getPrice()){
+               nodeOrParent->enqueue(newOrder);
+               return;
+            } else {
+               Node* newNode = new Node(newOrder);
+               if (nodeOrParent->getPrice() > newOrder.getPrice()){
+                  nodeOrParent->setLeft(newNode);
+               } else {
+                  nodeOrParent->setRight(newNode);
+               }
+
+               fixInsertionViolations(newNode);
+            }
+         }
+
+         void fixInsertionViolations(Node* node);
+
+
+         // Fetching methods ----------------------------------------------
+         Node* minimum(){
+            Node* currentNode = root;
+            while (currentNode->getLeft() != nullptr){
+               currentNode = currentNode->getLeft();
+            }
+
+            return currentNode;
+         }
+
+         Node* maximum(){
+            Node* currentNode = root;
+            while (currentNode->getRight() != nullptr){
+               currentNode = currentNode->getRight();
+            }
+
+            return currentNode;
+         }
+
+
+         Node* searchOrFindParent(double targetPrice){
+            Node* current = root;
+            Node* parent = nullptr;
+
+            while (current) {
+               parent = current;
+               if (targetPrice == current->getPrice()) {
+                     return current; // existing node 
+               } else if (targetPrice < current->getPrice()) {
+                     current = current->getLeft();
+               } else{
+                     current = current->getRight();
+               }
+            }
+            return parent; // where the new node should attach
+         }
+
+         
+         // Rotations -----------------------------------------------------
+
+         // Traversals ----------------------------------------------------
+
+
+         
     private:
          Node* root; 
 
+
 };
 
-/*
-RedBlackTree Class:
 
-
-
-2. void insert(int value):
-   - Inserts a new node with the specified 'value' into the tree.
-   - Ensures that Red-Black Tree properties are maintained after insertion.
+/* 
 
 3. void insertHelper(Node* root, Node* newNode):
    - Recursive helper function to insert 'newNode' at the correct position in the tree.

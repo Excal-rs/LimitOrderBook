@@ -4,9 +4,13 @@
 #include "Order.h"
 
 class Node {
+
 public:
+    enum class Colour : bool {BLACK = true, RED = false};    
+    using enum Colour;
+
     Node(Order firstOrder, Node* parent = nullptr) 
-        : parent(parent), left(nullptr), right(nullptr), colour(true) { // Red = True
+        : parent(parent), left(nullptr), right(nullptr), colour(RED) { // Red = True
         q.push(firstOrder);
     }
 
@@ -46,18 +50,19 @@ public:
     Node* getLeft() const { return left; }
     Node* getRight() const { return right; }
     Node* getParent() const { return parent; }
+    double getPrice() const {return q.front().getPrice(); }
 
     void setLeft(Node* newLeft) { left = newLeft; }
     void setRight(Node* newRight) { right = newRight; }
     void setParent(Node* newParent) { parent = newParent; }
 
 
-    bool getColour() const { return colour; }
-    void setColour(bool newColour) { colour = newColour; }
+    Colour getColour() const { return colour; }
+    void setColour(Colour newColour) { colour = newColour; }
 
 private:
     std::queue<Order> q;  // Queue of orders
-    bool colour;          // Red = True, Black = False (for Red-Black Tree balancing)
+    Colour colour;          // Red = True, Black = False (for Red-Black Tree balancing)
 
     Node* left;           // Left child pointer
     Node* right;          // Right child pointer
